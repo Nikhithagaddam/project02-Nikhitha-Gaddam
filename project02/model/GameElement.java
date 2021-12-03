@@ -1,0 +1,63 @@
+package model;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+import observerpattern.GameElementCollision;
+import observerpattern.GameElementCollisionObserver;
+
+public abstract class GameElement implements GameElementCollision{
+
+    public int x;
+    public int y;
+    public Color color;
+    public boolean filled;
+    public int width;
+    public int height;
+    public ArrayList<GameElementCollisionObserver> observers = new ArrayList<>();
+
+    public GameElement(int x,int y,Color color,boolean filled,int width,int height){
+        this.x=x;
+        this.y=y;
+        this.color=color;
+        this.filled=filled;
+        this.width=width;
+        this.height=height;
+    }    
+
+    public GameElement(){
+        this(0,0,Color.white,false,0,0);
+    }
+
+    public GameElement(int x, int y, int width, int height){
+        this(x,y,Color.white,false,width,height);
+    }
+
+    public boolean collideWith(GameElement another){
+        if(another.x > x + width || x>another.x + another.width
+        || y + height < another.y || y >another.y + another.height)
+        return false;
+        else {
+        	notifyListeners();
+        	return true;
+        }
+        
+    }
+
+    public abstract void render(Graphics2D g2);
+    public abstract void animate();
+
+	@Override
+	public void addListener(GameElementCollisionObserver o) {
+		observers.add(o);
+		
+	}
+
+	@Override
+	public void removeListener(GameElementCollisionObserver o) {
+		observers.remove(o);
+		
+	}
+
+}
+
